@@ -1,1 +1,36 @@
+// Services/InputValidator.cs
+using System.Text.RegularExpressions;
+
+public static class InputValidator
+{
+    // Allow letters, numbers, underscore, dot, and dash
+    public static string SanitizeUsername(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+            throw new ArgumentException("Username is required.");
+
+        // Remove anything not in the allowed set
+        var sanitized = Regex.Replace(username, @"[^a-zA-Z0-9_.-]", string.Empty);
+
+        if (sanitized.Length == 0)
+            throw new ArgumentException("Username contains invalid characters.");
+
+        return sanitized;
+    }
+
+    public static string SanitizeEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException("Email is required.");
+
+        // Basic email pattern (you can tighten this further)
+        var emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        if (!Regex.IsMatch(email, emailPattern))
+            throw new ArgumentException("Invalid email format.");
+
+        // Strip any HTML/script tags just in case
+        var sanitized = Regex.Replace(email, "<.*?>", string.Empty);
+        return sanitized;
+    }
+}
 
